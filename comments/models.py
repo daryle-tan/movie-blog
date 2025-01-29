@@ -12,3 +12,9 @@ class Comments(models.Model):
     comment_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
 
     post = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='comments')
+
+    def comment_update(self, new_comment):
+        self.comment = new_comment
+        self.save()
+
+    
