@@ -17,4 +17,3 @@ class Comments(models.Model):
         self.comment = new_comment
         self.save()
 
-    
