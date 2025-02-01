@@ -22,7 +22,7 @@ from comments import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', include('user.urls')),
+    path('accounts/', include('allauth.urls')),
     path('posts/', include('posts.urls')),
-    path('comments/', include('comments.urls')),
+    # path('comments/', include('comments.urls')),
 ]

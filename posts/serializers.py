@@ -12,7 +12,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     posts = serializers.PrimaryKeyRelatedField(source='post', queryset = Posts.objects.all())
 
-    users = serializers.PrimaryKeyRelatedField(source='user', queryset = User.objects.all())
+    users = serializers.PrimaryKeyRelatedField(source='comment_user', queryset = User.objects.all())
 
     class Meta:
         model = Comments
@@ -21,4 +21,4 @@ class CommentSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id',  'social_id', 'avatar', 'email']
+        fields = ['id', 'social_id', 'avatar', 'email']

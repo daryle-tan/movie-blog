@@ -46,9 +46,9 @@ class PostView(APIView):
         serializer = PostSerializer(posts)
         return Response(serializer.data)
     
-    def delete(self, request, category_id):
+    def delete(self, request, post_id):
         try:
-            posts = Posts.objects.get(id=category_id)
+            posts = Posts.objects.get(id=post_id)
             posts.delete()
             return Response({"success": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except Posts.DoesNotExist:
