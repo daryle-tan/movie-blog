@@ -8,5 +8,5 @@ urlpatterns = [
 
     # Comment paths
     path('<int:post_id>/comments/', CommentView.as_view(), name='comment-read-create'),
-    path('<int:post_id>/comments/<int:comment_id>/', CommentView.as_view(), name='comment-update-delete'),
+    path('<int:post_id>/comments/<int:comment_id>/', CommentView.as_view(), name='comment-crud'),
 ]

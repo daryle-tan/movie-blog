@@ -7,6 +7,8 @@ from comments.models import Comments
 from user.models import User
 from .serializers import PostSerializer, CommentSerializer, UserSerializer
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.views import redirect_to_login
+from django.shortcuts import redirect
 
 class PostView(APIView):
     def get(self,request, post_id=None):
@@ -56,25 +58,32 @@ class PostView(APIView):
 
 class CommentView(APIView):
 
-    def get(self, request, post_id):
+    def get(self, request, post_id, comment_id=None):
         post = get_object_or_404(Posts, id=post_id)
-        comments = Comments.objects.filter(post=post)
-        serializer = CommentSerializer(comments, many=True)
+        if comment_id is None:
+            comments = Comments.objects.filter(post=post)
+            serializer = CommentSerializer(comments, many=True)
+        else:
+            comment = get_object_or_404(Comments, id=comment_id, post=post)
+            serializer = CommentSerializer(comment)
         return Response(serializer.data)
     
     def post(self, request, post_id):
+        if not request.user.is_authenticated:
+            return Response({"error": "User must be logged in to comment."}, status=status.HTTP_401_UNAUTHORIZED)
+    
         post = get_object_or_404(Posts, id=post_id)
-        serializer = CommentSerializer(data=request.data)
+        serializer = CommentSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(post=post, comment_user=request.user)
+            serializer.save(post=post)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_comment_to_update_delete(self, request, post_id, comment_id):
-        post = get_object_or_404(Posts, id=post_id)
-        comment = get_object_or_404(Comments, id=comment_id, post=post)
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data)
+    # def get(self, request, post_id, comment_id):
+    #     post = get_object_or_404(Posts, id=post_id)
+    #     comment = get_object_or_404(Comments, id=comment_id, post=post)
+    #     serializer = CommentSerializer(comment)
+    #     return Response(serializer.data)
     
     def put(self, request, post_id, comment_id):
         post = get_object_or_404(Posts, id=post_id)
