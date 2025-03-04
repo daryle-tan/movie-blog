@@ -47,6 +47,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',      
+        'rest_framework.parsers.FormParser',      
+        'rest_framework.parsers.MultiPartParser', 
+    ]
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -93,8 +101,8 @@ DATABASES = {
         "NAME": "movies_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "localhost",  
-        "PORT": 5454,
+        "HOST": "db",  
+        "PORT": '5432',
     }
 }
 

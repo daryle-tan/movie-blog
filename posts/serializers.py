@@ -8,6 +8,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
         fields = ['id', 'post_title', 'post_content', 'movie_genre', 'post_date']
+        depth: 1
 
 class CommentSerializer(serializers.ModelSerializer):
     posts = serializers.PrimaryKeyRelatedField(source='post', queryset = Posts.objects.all())

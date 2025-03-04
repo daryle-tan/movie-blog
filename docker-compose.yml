@@ -1,4 +1,11 @@
 services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      init_db:
+        condition: service_completed_successfully
   db:
     image: postgres:15
     healthcheck:
@@ -15,6 +22,19 @@ services:
       - "5454:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  init_db:
+    build: .
+    command: bash -c "while ! python manage.py makemigrations; do sleep 5; done && while ! python manage.py migrate; do sleep 5; done && python manage.py setup_data"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=movies_db
+      - DJANGO_SETTINGS_MODULE=movie_proj.settings
 
 volumes:
   postgres_data:
