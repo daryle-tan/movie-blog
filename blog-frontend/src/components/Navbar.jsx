@@ -1,23 +1,17 @@
 import { Link } from "react-router-dom"
 
-const Navbar = () => {
+function Navbar({ isLoggedIn, handleLogout }) {
   return (
-    <>
-      <ul className="navbar">
-        <li>
-          <Link to="/blog">Blogs</Link>
-        </li>
-        <li>
-          <Link to="/signup">Signup</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        <li>
+    <nav>
+      {isLoggedIn ? (
+        <>
+          <Link to="/blog">Home</Link>
+          <Link to="/create-blog">Blog</Link>
           <Link to="/logout">Logout</Link>
-        </li>
-      </ul>
-    </>
+        </>
+      ) : null}
+    </nav>
   )
 }
+
 export default Navbar

@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .models import Posts
 from comments.models import Comments
-from user.models import User
+from user_app.models import User
 from .serializers import PostSerializer, CommentSerializer, UserSerializer
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.views import redirect_to_login
@@ -78,12 +78,6 @@ class CommentView(APIView):
             serializer.save(post=post)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # def get(self, request, post_id, comment_id):
-    #     post = get_object_or_404(Posts, id=post_id)
-    #     comment = get_object_or_404(Comments, id=comment_id, post=post)
-    #     serializer = CommentSerializer(comment)
-    #     return Response(serializer.data)
     
     def put(self, request, post_id, comment_id):
         post = get_object_or_404(Posts, id=post_id)

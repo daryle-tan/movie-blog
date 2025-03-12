@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Posts
 from comments.models import Comments
-from user.models import User
+from user_app.models import User
 from rest_framework.response import Response
 
 class PostSerializer(serializers.ModelSerializer):

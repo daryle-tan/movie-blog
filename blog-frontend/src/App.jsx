@@ -1,53 +1,131 @@
-import "./App.css"
 import { useState } from "react"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom"
 import Navbar from "./components/Navbar"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import BlogPage from "./pages/BlogPage"
 import Logout from "./pages/Logout"
+import Blog from "./components/Blog"
+import GoogleCallbackHandler from "./components/GoogleCallbackHandler"
 
 function App() {
-  const [formData, setFormData] = useState({ username: "", password: "" })
-  const [userToken, setUserToken] = useState(null)
+  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [userToken, setUserToken] = useState(localStorage.getItem("authToken"))
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("authToken"),
+  )
+  const [responseMsg, setResponseMsg] = useState("")
 
-  const handleToken = (token) => {
-    setFormData({ username: "", password: "" })
+  const handleLogin = (token) => {
+    localStorage.setItem("authToken", token)
     setUserToken(token)
+    setIsLoggedIn(true)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken")
+    setUserToken(null)
+    setIsLoggedIn(false)
   }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
+    setFormData({ ...formData, [name]: value })
   }
 
   return (
     <Router>
-      <Navbar />
+      <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
-        <Route path="/blog" element={<BlogPage userToken={userToken} />} />
         <Route
-          path="/signup"
+          path="/"
           element={
-            <Signup handleInputChange={handleInputChange} formData={formData} />
+            isLoggedIn ? (
+              <Navigate to="/blog" />
+            ) : (
+              <Login
+                handleInputChange={handleInputChange}
+                formData={formData}
+                handleLogin={handleLogin}
+                userToken={userToken}
+                responseMsg={responseMsg}
+                setResponseMsg={setResponseMsg}
+              />
+            )
           }
         />
         <Route
-          path="/login"
+          path="/signup"
           element={
-            <Login
+            <Signup
               handleInputChange={handleInputChange}
               formData={formData}
-              handleToken={handleToken}
+              handleLogin={handleLogin}
+              userToken={userToken}
+              responseMsg={responseMsg}
+              setResponseMsg={setResponseMsg}
+            />
+          }
+        />
+        <Route
+          path="/blog"
+          element={
+            isLoggedIn ? (
+              <BlogPage
+                userToken={userToken}
+                logout={handleLogout}
+                isLoggedIn={isLoggedIn}
+              />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/create-blog"
+          element={
+            isLoggedIn ? (
+              <Blog
+                userToken={userToken}
+                logout={handleLogout}
+                isLoggedIn={isLoggedIn}
+              />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/blog/edit/:id"
+          element={
+            isLoggedIn ? (
+              <Blog
+                userToken={userToken}
+                logout={handleLogout}
+                isLoggedIn={isLoggedIn}
+              />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/callback"
+          element={
+            <GoogleCallbackHandler
+              handleLogin={handleLogin}
+              setResponseMsg={setResponseMsg}
             />
           }
         />
         <Route
           path="/logout"
-          element={<Logout userToken={userToken} setUserToken={setUserToken} />}
+          element={<Logout handleLogout={handleLogout} />}
         />
       </Routes>
     </Router>

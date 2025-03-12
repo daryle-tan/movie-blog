@@ -1,7 +1,7 @@
 from django.db import models
 from django.core import validators as v
 from posts.models import Posts
-from user.models import User
+from user_app.models import User
 
 class Comments(models.Model):
 
