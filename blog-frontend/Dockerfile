@@ -1,10 +1,12 @@
 FROM node:18 AS build
+ARG VITE_OMDB_API_KEY
 WORKDIR /app
 COPY package*.json ./
-COPY .env .
+# COPY .env .
 RUN npm install
 COPY . .
-RUN npm run build
+RUN echo "VITE_OMDB_API_KEY=$VITE_OMDB_API_KEY" > .env && npm run build  
+# RUN npm run build
 
 # Production stage
 FROM nginx:alpine

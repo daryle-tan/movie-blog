@@ -33,12 +33,14 @@ services:
     build:
       context: ./blog-frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_OMDB_API_KEY=${VITE_OMDB_API_KEY}
     ports:
       - "80:80"
     volumes:
       - static_volume:/usr/share/nginx/html/static
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     depends_on:
       - api
 
