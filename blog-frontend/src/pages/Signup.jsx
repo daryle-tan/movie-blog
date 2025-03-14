@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, Link } from "react-router-dom"
+import { Container, Row, Col } from "react-bootstrap"
 import Form from "../components/Form"
 
 export default function Signup({ handleInputChange, formData, handleLogin }) {
@@ -15,7 +16,7 @@ export default function Signup({ handleInputChange, formData, handleLogin }) {
       .then((response) => response.json())
       .then((data) => {
         setCsrfToken(data.csrfToken)
-        console.log("CSRF Token fetched:", data.csrfToken) // Debug
+        console.log("CSRF Token fetched:", data.csrfToken)
       })
       .catch((error) => console.error("CSRF fetch error:", error))
   }, [])
@@ -31,13 +32,13 @@ export default function Signup({ handleInputChange, formData, handleLogin }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken, // Send CSRF token
+          "X-CSRFToken": csrfToken,
         },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
         }),
-        credentials: "include", // Keep this for session cookies
+        credentials: "include",
       })
       const data = await response.json()
       if (response.ok) {
@@ -57,12 +58,22 @@ export default function Signup({ handleInputChange, formData, handleLogin }) {
   }
 
   return (
-    <Form
-      formType="Signup"
-      handleInputChange={handleInputChange}
-      formData={formData}
-      handleSubmit={handleSubmit}
-      responseMsg={responseMsg}
-    />
+    <Container className="mt-5">
+      <Row className="justify-content-center">
+        <Col xs={10} sm={8} md={8} lg={6}>
+          <h2 className="text-center mb-4">Sign Up</h2>
+          <Form
+            formType="Signup"
+            handleInputChange={handleInputChange}
+            formData={formData}
+            handleSubmit={handleSubmit}
+            responseMsg={responseMsg}
+          />
+          <div className="text-center mt-3">
+            Already have an account? Sign-in <Link to="/">here</Link>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   )
 }

@@ -1,3 +1,5 @@
+import { Form as BootstrapForm, Button, Alert } from "react-bootstrap"
+
 function Form({
   formType,
   handleInputChange,
@@ -7,33 +9,48 @@ function Form({
 }) {
   return (
     <>
-      {responseMsg && <h2>{responseMsg}</h2>}
+      {responseMsg && (
+        <Alert
+          variant={responseMsg.includes("successful") ? "success" : "danger"}
+          className="mt-3"
+        >
+          {responseMsg}
+        </Alert>
+      )}
       <div className="login">
-        <h2>{formType}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
+        {/* <h2 className="mb-4">{formType}</h2> */}
+        <BootstrapForm onSubmit={handleSubmit}>
+          <BootstrapForm.Group className="mb-3" controlId={`${formType}Email`}>
+            <BootstrapForm.Label>Email</BootstrapForm.Label>
+            <BootstrapForm.Control
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              placeholder="Enter email"
               required
             />
-          </div>
+          </BootstrapForm.Group>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
+          <BootstrapForm.Group
+            className="mb-3"
+            controlId={`${formType}Password`}
+          >
+            <BootstrapForm.Label>Password</BootstrapForm.Label>
+            <BootstrapForm.Control
               type="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              placeholder="Enter password"
               required
             />
-          </div>
-          <button type="submit">{formType}</button>
-        </form>
+          </BootstrapForm.Group>
+
+          <Button variant="primary" type="submit" className="w-100">
+            {formType}
+          </Button>
+        </BootstrapForm>
       </div>
     </>
   )

@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Spinner,
+  ListGroup,
+} from "react-bootstrap"
 import Navbar from "../components/Navbar"
 
 export default function BlogPage({ userToken, logout, isLoggedIn }) {
   const [posts, setPosts] = useState([])
-  const [comments, setComments] = useState([])
+  const [comments, setComments] = useState([]) // Unused for now
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const navigate = useNavigate()
@@ -25,7 +34,7 @@ export default function BlogPage({ userToken, logout, isLoggedIn }) {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${userToken}`, // Changed from Bearer to Token
+            Authorization: `Token ${userToken}`,
           },
         })
 
@@ -82,9 +91,12 @@ export default function BlogPage({ userToken, logout, isLoggedIn }) {
 
   if (loading) {
     return (
-      <>
-        <div>Loading posts...</div>
-      </>
+      <Container className="mt-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+        <p>Loading posts...</p>
+      </Container>
     )
   }
 
@@ -94,44 +106,57 @@ export default function BlogPage({ userToken, logout, isLoggedIn }) {
   }
 
   return (
-    <>
-      <div style={{ padding: "20px" }}>
-        <h1>Blog Posts</h1>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {posts.length === 0 ? (
-          <p>No posts available.</p>
-        ) : (
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {posts.map((post) => (
-              <li
-                key={post.id}
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "10px",
-                  marginBottom: "10px",
-                  cursor: "pointer",
-                }}
-                onClick={() => handlePostClick(post.id)}
-              >
-                <h2>{post.post_title}</h2>
-                {post.poster ? (
-                  <img
-                    src={post.poster}
-                    alt={`${post.post_title} poster`}
-                    style={{ maxWidth: "200px", height: "auto" }}
-                  />
-                ) : (
-                  <div>No movie image available</div>
-                )}
-                <small style={{ fontSize: "0.9em", opacity: 1 }}>
-                  Blog created on: {post.post_date}
-                </small>
-                <div>{post.post_content}</div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
+    <Container className="mt-5">
+      <Row>
+        <Col>
+          <h1 className="text-center mb-4">Blog Posts</h1>
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
+          )}
+          {posts.length === 0 ? (
+            <p className="text-center">No posts available.</p>
+          ) : (
+            <ListGroup as="ul">
+              {posts.map((post) => (
+                <ListGroup.Item
+                  as="li"
+                  key={post.id}
+                  action
+                  onClick={() => handlePostClick(post.id)}
+                  className="mb-3 p-3"
+                >
+                  <Card>
+                    <Row className="g-0">
+                      {post.poster && (
+                        <Col md={4} className="d-flex align-items-center">
+                          <Card.Img
+                            src={post.poster}
+                            alt={`${post.post_title} poster`}
+                            style={{ maxWidth: "200px", height: "auto" }}
+                          />
+                        </Col>
+                      )}
+                      <Col md={post.poster ? 8 : 12}>
+                        <Card.Body>
+                          <Card.Title>{post.post_title}</Card.Title>
+                          <Card.Text>{post.post_content}</Card.Text>
+                          <Card.Text>
+                            <small className="text-muted">
+                              Blog created on: {post.post_date}
+                            </small>
+                          </Card.Text>
+                        </Card.Body>
+                      </Col>
+                    </Row>
+                  </Card>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
+        </Col>
+      </Row>
+    </Container>
   )
 }

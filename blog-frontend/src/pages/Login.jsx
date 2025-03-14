@@ -1,5 +1,13 @@
 import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
+import {
+  Container,
+  Form as BootstrapForm,
+  Button,
+  Alert,
+  Row,
+  Col,
+} from "react-bootstrap"
 import Form from "../components/Form"
 import GoogleLogin from "../components/GoogleLogin"
 
@@ -38,30 +46,46 @@ export default function Login({
     }
   }
 
-  const handleGoogleLogin = () => {
-    console.log("Navigating to /accounts/google/login/")
-    window.location.href = "/accounts/google/login/"
-  }
+  // const handleGoogleLogin = () => {
+  //   console.log("Navigating to /accounts/google/login/");
+  //   window.location.href = "/accounts/google/login/";
+  // };
 
   if (shouldRedirect) {
     return <Navigate to="/blog" />
   }
 
   return (
-    <>
-      <Form
-        formType="Login"
-        handleInputChange={handleInputChange}
-        formData={formData}
-        handleSubmit={handleSubmit}
-        responseMsg={responseMsg}
-      />
-      <div>-------- or --------</div>
-      <GoogleLogin />
-      <div>
-        Need to Sign-up? Register <Link to="/signup">Here</Link>
-      </div>
-      {responseMsg && <p>{responseMsg}</p>}
-    </>
+    <Container className="mt-5">
+      <Row className="justify-content-center">
+        <Col xs={10} sm={8} md={8} lg={6}>
+          <h2 className="text-center mb-4">Login</h2>
+          <Form
+            formType="Login"
+            handleInputChange={handleInputChange}
+            formData={formData}
+            handleSubmit={handleSubmit}
+            responseMsg={responseMsg}
+          />
+          <div className="text-center my-3">-------- or --------</div>
+          <div className="d-grid gap-2">
+            <GoogleLogin />
+          </div>
+          <div className="text-center mt-3">
+            Need to Sign-up? Register <Link to="/signup">Here</Link>
+          </div>
+          {responseMsg && (
+            <Alert
+              variant={
+                responseMsg.includes("successful") ? "success" : "danger"
+              }
+              className="mt-3"
+            >
+              {responseMsg}
+            </Alert>
+          )}
+        </Col>
+      </Row>
+    </Container>
   )
 }

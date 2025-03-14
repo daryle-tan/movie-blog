@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react"
-import { Navigate, useParams, useNavigate } from "react-router-dom" // Added useNavigate
+import { Navigate, useParams, useNavigate } from "react-router-dom"
+import {
+  Container,
+  Form as BootstrapForm,
+  Button,
+  Alert,
+  Card,
+  Modal,
+  Row,
+  Col,
+} from "react-bootstrap"
 
 const Blog = ({ userToken, isLoggedIn, logout }) => {
-  // Added logout prop
   const [formData, setFormData] = useState({
     post_title: "",
     post_content: "",
@@ -13,7 +22,7 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { id } = useParams()
-  const navigate = useNavigate() // Added for redirect
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (id && isLoggedIn) {
@@ -23,7 +32,7 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Token ${userToken}`, // Changed to Token
+              Authorization: `Token ${userToken}`,
             },
           })
 
@@ -69,7 +78,7 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
         method: method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${userToken}`, // Changed to Token
+          Authorization: `Token ${userToken}`,
         },
         body: JSON.stringify(formData),
       })
@@ -92,7 +101,7 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
       )
       if (!isEditing) {
         setFormData({ post_title: "", post_content: "", movie_genre: "" })
-        navigate("/blog") // Redirect to blog list after creation
+        navigate("/blog")
       }
       setIsEditing(false)
     } catch (err) {
@@ -110,7 +119,7 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${userToken}`, // Changed to Token
+            Authorization: `Token ${userToken}`,
           },
         },
       )
@@ -126,7 +135,7 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
 
       setCurrentBlog(null)
       setMessage("Blog deleted successfully!")
-      navigate("/blog") // Redirect after deletion
+      navigate("/blog")
     } catch (err) {
       setMessage("Error: " + err.message)
     } finally {
@@ -166,120 +175,117 @@ const Blog = ({ userToken, isLoggedIn, logout }) => {
   }
 
   return (
-    <div className="blog-container">
-      <h2>{isEditing ? "Edit Blog" : "Create Blog"}</h2>
-      <div className="blog-display">
-        {currentBlog ? (
-          <>
-            <h3>{currentBlog.post_title}</h3>
-            <p>{currentBlog.post_content}</p>
-            <p>
-              <strong>Genre:</strong> {currentBlog.movie_genre}
-            </p>
-          </>
-        ) : (
-          "No blog created yet."
-        )}
-      </div>
+    <Container className="mt-5">
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
+          <h2 className="text-center mb-4">
+            {isEditing ? "Edit Blog" : "Create Blog"}
+          </h2>
 
-      <input
-        type="text"
-        name="post_title"
-        value={formData.post_title}
-        onChange={handleInputChange}
-        placeholder="Blog Title"
-      />
-      <textarea
-        name="post_content"
-        value={formData.post_content}
-        onChange={handleInputChange}
-        placeholder="Blog Content"
-      />
-      <input
-        type="text"
-        name="movie_genre"
-        value={formData.movie_genre}
-        onChange={handleInputChange}
-        placeholder="Genre"
-      />
+          {currentBlog && (
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>{currentBlog.post_title}</Card.Title>
+                <Card.Text>{currentBlog.post_content}</Card.Text>
+                <Card.Text>
+                  <strong>Genre:</strong> {currentBlog.movie_genre}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          )}
 
-      <button
-        type="button"
-        className="create-blog-btn"
-        onClick={handleBlogCreate}
-      >
-        {isEditing ? "Update Blog" : "Create Blog"}
-      </button>
-      {isEditing && (
-        <>
-          <button
-            type="button"
-            className="edit-blog-btn"
-            onClick={handleBlogEdit}
-            disabled={!currentBlog}
-          >
-            Edit Blog
-          </button>
-          <button
-            type="button"
-            className="delete-blog-btn"
-            onClick={confirmDelete}
-            disabled={!currentBlog}
-          >
-            Delete Blog
-          </button>
-        </>
-      )}
+          <BootstrapForm>
+            <BootstrapForm.Group className="mb-3" controlId="postTitle">
+              <BootstrapForm.Label>Blog Title</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="text"
+                name="post_title"
+                value={formData.post_title}
+                onChange={handleInputChange}
+                placeholder="Enter blog title"
+              />
+            </BootstrapForm.Group>
 
-      {message && <p>{message}</p>}
+            <BootstrapForm.Group className="mb-3" controlId="postContent">
+              <BootstrapForm.Label>Blog Content</BootstrapForm.Label>
+              <BootstrapForm.Control
+                as="textarea"
+                rows={5}
+                name="post_content"
+                value={formData.post_content}
+                onChange={handleInputChange}
+                placeholder="Write your blog content here"
+              />
+            </BootstrapForm.Group>
 
-      {showDeleteModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              padding: "20px",
-              borderRadius: "5px",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-              textAlign: "center",
-            }}
-          >
-            <h3>Are you sure?</h3>
-            <p>
-              Do you really want to delete {currentBlog?.post_title}? This
-              action cannot be undone.
-            </p>
-            <button
-              type="button"
-              onClick={handleBlogDelete}
-              style={{ marginRight: "10px", padding: "5px 10px" }}
+            <BootstrapForm.Group className="mb-3" controlId="movieGenre">
+              <BootstrapForm.Label>Genre</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="text"
+                name="movie_genre"
+                value={formData.movie_genre}
+                onChange={handleInputChange}
+                placeholder="Enter movie genre"
+              />
+            </BootstrapForm.Group>
+
+            <div className="d-flex gap-2 justify-content-center">
+              <Button variant="primary" onClick={handleBlogCreate}>
+                {isEditing ? "Update Blog" : "Create Blog"}
+              </Button>
+              {isEditing && (
+                <>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={handleBlogEdit}
+                    disabled={!currentBlog}
+                  >
+                    Edit Blog
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={confirmDelete}
+                    disabled={!currentBlog}
+                  >
+                    Delete Blog
+                  </Button>
+                </>
+              )}
+            </div>
+          </BootstrapForm>
+
+          {message && (
+            <Alert
+              variant={message.includes("successfully") ? "success" : "danger"}
+              className="mt-3"
             >
-              Yes, Delete
-            </button>
-            <button
-              type="button"
-              onClick={cancelDelete}
-              style={{ padding: "5px 10px" }}
-            >
-              No, Cancel
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+              {message}
+            </Alert>
+          )}
+
+          <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Deletion</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>
+                Are you sure you want to delete{" "}
+                <strong>{currentBlog?.post_title}</strong>? This action cannot
+                be undone.
+              </p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={cancelDelete}>
+                No, Cancel
+              </Button>
+              <Button variant="danger" onClick={handleBlogDelete}>
+                Yes, Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Col>
+      </Row>
+    </Container>
   )
 }
 

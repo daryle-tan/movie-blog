@@ -5,13 +5,14 @@ import {
   Route,
   Navigate,
 } from "react-router-dom"
-import Navbar from "./components/Navbar"
+import NavbarComponent from "./components/Navbar"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import BlogPage from "./pages/BlogPage"
 import Logout from "./pages/Logout"
 import Blog from "./components/Blog"
 import GoogleCallbackHandler from "./components/GoogleCallbackHandler"
+import "bootstrap/dist/css/bootstrap.min.css"
 
 function App() {
   const [formData, setFormData] = useState({ email: "", password: "" })
@@ -40,7 +41,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <NavbarComponent isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
         <Route
           path="/"
