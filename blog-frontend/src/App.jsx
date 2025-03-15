@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,6 +21,7 @@ function App() {
     !!localStorage.getItem("authToken"),
   )
   const [responseMsg, setResponseMsg] = useState("")
+  const [theme, setTheme] = useState("light")
 
   const handleLogin = (token) => {
     localStorage.setItem("authToken", token)
@@ -39,17 +40,45 @@ function App() {
     setFormData({ ...formData, [name]: value })
   }
 
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
+  }
+
+  useEffect(() => {
+    console.log("isLoggedIn changed:", isLoggedIn)
+  }, [isLoggedIn])
+
   return (
-    <Router>
-      <NavbarComponent isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/blog" />
-            ) : (
-              <Login
+    <div data-bs-theme={theme}>
+      <Router>
+        <NavbarComponent
+          isLoggedIn={isLoggedIn}
+          handleLogout={handleLogout}
+          toggleTheme={toggleTheme}
+          theme={theme}
+        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/blog" />
+              ) : (
+                <Login
+                  handleInputChange={handleInputChange}
+                  formData={formData}
+                  handleLogin={handleLogin}
+                  userToken={userToken}
+                  responseMsg={responseMsg}
+                  setResponseMsg={setResponseMsg}
+                />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <Signup
                 handleInputChange={handleInputChange}
                 formData={formData}
                 handleLogin={handleLogin}
@@ -57,79 +86,66 @@ function App() {
                 responseMsg={responseMsg}
                 setResponseMsg={setResponseMsg}
               />
-            )
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <Signup
-              handleInputChange={handleInputChange}
-              formData={formData}
-              handleLogin={handleLogin}
-              userToken={userToken}
-              responseMsg={responseMsg}
-              setResponseMsg={setResponseMsg}
-            />
-          }
-        />
-        <Route
-          path="/blog"
-          element={
-            isLoggedIn ? (
-              <BlogPage
-                userToken={userToken}
-                logout={handleLogout}
-                isLoggedIn={isLoggedIn}
+            }
+          />
+          <Route
+            path="/blog"
+            element={
+              isLoggedIn ? (
+                <BlogPage
+                  userToken={userToken}
+                  logout={handleLogout}
+                  isLoggedIn={isLoggedIn}
+                />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/create-blog"
+            element={
+              isLoggedIn ? (
+                <Blog
+                  userToken={userToken}
+                  logout={handleLogout}
+                  isLoggedIn={isLoggedIn}
+                />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/blog/edit/:id"
+            element={
+              isLoggedIn ? (
+                <Blog
+                  userToken={userToken}
+                  logout={handleLogout}
+                  isLoggedIn={isLoggedIn}
+                />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/callback"
+            element={
+              <GoogleCallbackHandler
+                handleLogin={handleLogin}
+                setResponseMsg={setResponseMsg}
               />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/create-blog"
-          element={
-            isLoggedIn ? (
-              <Blog
-                userToken={userToken}
-                logout={handleLogout}
-                isLoggedIn={isLoggedIn}
-              />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/blog/edit/:id"
-          element={
-            isLoggedIn ? (
-              <Blog
-                userToken={userToken}
-                logout={handleLogout}
-                isLoggedIn={isLoggedIn}
-              />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/callback"
-          element={
-            <GoogleCallbackHandler
-              handleLogin={handleLogin}
-              setResponseMsg={setResponseMsg}
-            />
-          }
-        />
-        <Route
-          path="/logout"
-          element={<Logout handleLogout={handleLogout} />}
-        />
-      </Routes>
-    </Router>
+            }
+          />
+          <Route
+            path="/logout"
+            element={<Logout handleLogout={handleLogout} />}
+          />
+        </Routes>
+      </Router>
+    </div>
   )
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react" // Added useEffect
 import { Link, Navigate } from "react-router-dom"
 import {
   Container,
@@ -19,17 +19,40 @@ export default function Login({
 }) {
   const [responseMsg, setResponseMsg] = useState("")
   const [shouldRedirect, setShouldRedirect] = useState(false)
+  const [csrfToken, setCsrfToken] = useState("") // Added CSRF state
+
+  // Fetch CSRF token on mount
+  useEffect(() => {
+    fetch("/api/user/get-csrf-token/", {
+      method: "GET",
+      credentials: "include", // Include cookies
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setCsrfToken(data.csrfToken)
+        console.log("CSRF Token fetched:", data.csrfToken)
+      })
+      .catch((error) => console.error("CSRF fetch error:", error))
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!csrfToken) {
+      setResponseMsg("CSRF token not available. Please try again.")
+      return
+    }
     try {
       const response = await fetch("/api/user/login/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken, // Added CSRF token
+        },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
         }),
+        credentials: "include", // Added to send cookies
       })
       const data = await response.json()
       if (response.ok) {
@@ -45,11 +68,6 @@ export default function Login({
       setResponseMsg("Network error: " + error.message)
     }
   }
-
-  // const handleGoogleLogin = () => {
-  //   console.log("Navigating to /accounts/google/login/");
-  //   window.location.href = "/accounts/google/login/";
-  // };
 
   if (shouldRedirect) {
     return <Navigate to="/blog" />

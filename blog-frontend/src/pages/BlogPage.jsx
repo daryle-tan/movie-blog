@@ -9,7 +9,6 @@ import {
   Spinner,
   ListGroup,
 } from "react-bootstrap"
-import Navbar from "../components/Navbar"
 
 export default function BlogPage({ userToken, logout, isLoggedIn }) {
   const [posts, setPosts] = useState([])
@@ -107,9 +106,8 @@ export default function BlogPage({ userToken, logout, isLoggedIn }) {
 
   return (
     <Container className="mt-5">
-      <Row>
-        <Col>
-          <h1 className="text-center mb-4">Blog Posts</h1>
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
           {error && (
             <Alert variant="danger" className="mb-4">
               {error}
@@ -125,31 +123,42 @@ export default function BlogPage({ userToken, logout, isLoggedIn }) {
                   key={post.id}
                   action
                   onClick={() => handlePostClick(post.id)}
-                  className="mb-3 p-3"
+                  className="mb-3 p-3 d-flex justify-content-center"
+                  style={{ cursor: "pointer" }}
                 >
-                  <Card>
-                    <Row className="g-0">
-                      {post.poster && (
-                        <Col md={4} className="d-flex align-items-center">
-                          <Card.Img
-                            src={post.poster}
-                            alt={`${post.post_title} poster`}
-                            style={{ maxWidth: "200px", height: "auto" }}
-                          />
-                        </Col>
+                  <Card className="text-center" style={{ maxWidth: "95%" }}>
+                    <Card.Body>
+                      <Card.Title as="h2">{post.post_title}</Card.Title>
+                      <Card.Text className="mb-3">
+                        Genre: {post.movie_genre}
+                      </Card.Text>
+                      {post.poster ? (
+                        <Card.Img
+                          src={post.poster}
+                          alt={`${post.post_title} poster`}
+                          className="my-3 mx-auto d-block"
+                          style={{ maxWidth: "95%", height: "auto" }}
+                        />
+                      ) : (
+                        <Card.Text className="my-3">
+                          No movie image available
+                        </Card.Text>
                       )}
-                      <Col md={post.poster ? 8 : 12}>
-                        <Card.Body>
-                          <Card.Title>{post.post_title}</Card.Title>
-                          <Card.Text>{post.post_content}</Card.Text>
-                          <Card.Text>
-                            <small className="text-muted">
-                              Blog created on: {post.post_date}
-                            </small>
-                          </Card.Text>
-                        </Card.Body>
-                      </Col>
-                    </Row>
+                      <Card.Text className="text-center">
+                        <small className="text-muted d-block mb-2">
+                          Blog created on: {post.post_date}
+                        </small>
+                      </Card.Text>
+                      <div className="text-start">
+                        {post.post_content
+                          .split("\n")
+                          .map((paragraph, index) => (
+                            <p key={index} className="mb-3">
+                              {paragraph}
+                            </p>
+                          ))}
+                      </div>
+                    </Card.Body>
                   </Card>
                 </ListGroup.Item>
               ))}

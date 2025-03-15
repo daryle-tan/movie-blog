@@ -60,10 +60,10 @@ export default function Signup({ handleInputChange, formData, handleLogin }) {
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col xs={10} sm={8} md={8} lg={6}>
+        <Col md={6} lg={4}>
           <h2 className="text-center mb-4">Sign Up</h2>
           <Form
-            formType="Signup"
+            formType="Sign-up"
             handleInputChange={handleInputChange}
             formData={formData}
             handleSubmit={handleSubmit}
