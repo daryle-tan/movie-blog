@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react" // Added useEffect
+import { useState, useEffect } from "react"
 import { Link, Navigate } from "react-router-dom"
 import {
   Container,
@@ -19,13 +19,13 @@ export default function Login({
 }) {
   const [responseMsg, setResponseMsg] = useState("")
   const [shouldRedirect, setShouldRedirect] = useState(false)
-  const [csrfToken, setCsrfToken] = useState("") // Added CSRF state
+  const [csrfToken, setCsrfToken] = useState("")
 
   // Fetch CSRF token on mount
   useEffect(() => {
     fetch("/api/user/get-csrf-token/", {
       method: "GET",
-      credentials: "include", // Include cookies
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -46,13 +46,13 @@ export default function Login({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken, // Added CSRF token
+          "X-CSRFToken": csrfToken,
         },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
         }),
-        credentials: "include", // Added to send cookies
+        credentials: "include",
       })
       const data = await response.json()
       if (response.ok) {
